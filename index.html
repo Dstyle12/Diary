@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diary</title>
+    <link rel="stylesheet" href="diary.css">
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="title-toggle" id="titleToggle">Wanna see the real title?</button>
+            <button class="bonus-button" id="bonusButton">Bonus feature</button>
+        </div>
+        <h1 id="mainTitle" class="main-title">MY DIARY</h1>
+        <div class="header-right">
+            <div class="color-control">
+                <label for="textColorPicker">Text Color:</label>
+                <input type="color" class="color-input" id="textColorPicker" value="#FFD700">
+            </div>
+            <div class="color-control">
+                <label for="bgColorPicker">Background Color:</label>
+                <input type="color" class="color-input" id="bgColorPicker" value="#000080">
+            </div>
+            <div class="color-control">
+                <label for="buttonGradientColor1">Button Gradient 1:</label>
+                <input type="color" class="color-input" id="buttonGradientColor1" value="#FF6B6B">
+            </div>
+            <div class="color-control">
+                <label for="buttonGradientColor2">Button Gradient 2:</label>
+                <input type="color" class="color-input" id="buttonGradientColor2" value="#4ECDC4">
+            </div>
+            <div class="color-control">
+                <label for="bgImageInput">Background Image:</label>
+                <input type="file" id="bgImageInput" accept="image/*" style="display: none;">
+                <button class="image-upload-button" id="imageUploadBtn">Choose Image</button>
+                <button class="image-remove-button" id="imageRemoveBtn" style="display: none;">Remove Image</button>
+            </div>
+        </div>
+    </div>
+    <div class="diary-container">
+       <div class="entries-list" id="entriesList"></div>
+       <div class="input-container">
+        <div class="input-wrapper">
+            <textarea name="" id="entryTextArea" placeholder="Write your diary here..." class="textarea"></textarea>
+            <div class="photo-controls">
+                <input type="file" name="" id="photoInput" accept="image/*" multiple style="display: none;" class="photo-input">
+                <button id="addPhotoBtn" class="add-photo-button" title="Add photos (max 5)">+</button>
+            </div>
+            <button id="addEntryBtn" class="add-entry-button">></button>
+        </div>
+       </div>
+    </div>
+    <script src="diary.js"></script>
+</body>
+</html>
