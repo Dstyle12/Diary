@@ -1,3 +1,83 @@
+class diaryDB{
+    constructor(){
+        this.dbName = 'DiaryAppDB'
+        this.version = 1
+        this.db = null
+    }
+    async init(){
+        return new Promise((resolve,reject)=>{
+            const request = indexedDB.open(this.dbName,this.version)
+            request.onerror = () => reject(request.error)
+            request.onsuccess = () =>{
+                this.db = request.result
+                resolve(this.db)
+            }
+            request.onupgradeneeded = (event) =>{
+                const db = event.target.result
+                if(!db.objectStoreNames.contains('settings')){
+                    db.createObjectStore('settings',{keypath:'id'})
+                }
+                if(!db.objectStoreNames.contains('entries')){
+                    const entriesStore = db.createObjectStore('entries',{keypath:'id'})
+                    entriesStore.createIndex('date','date',{unique:false})
+                }
+                if(!db.objectStoreNames.contains('photos')){
+                    const photosStore = db.createObjectStore('photos',{keypath:'id'})
+                    photosStore.createIndex('entryId','entryId',{unique:false})
+                }
+            }
+        })
+    }
+    async saveSettings(settings){
+        return this.executeTransaction('settings','readwrite',(store)=>{
+            store.put({id:'diarySettings',...settings})
+        })
+    }
+    async loadSettings(){
+        return this.executeTransaction('settings','readonly',(store)=>{
+            return store.get('diarySettings')
+        })
+    }
+    async saveEntry(entry){
+        return this.executeTransaction('entries','readwrite',(store)=>{
+            store.put(entry)
+        })
+    }
+    async loadAllEntries(){
+        return this.executeTransaction('entries','readonly',(store)=>{
+            return store.getAll()
+        })
+    }
+    async savePhoto(photoData){
+        return this.executeTransaction('photos','readwrite',(store)=>{
+            store.put(photoData)
+        })
+    }
+    async getPhotosByEntry(entryId){
+        return this.executeTransaction('photos','readonly',(store)=>{
+            const index = store.index('entryId')
+            return index.getAll(entryId)
+        })
+    }
+    executeTransaction(storeName,mode,operation){
+        return new Promise((resolve,reject)=>{
+            const transaction = this.db.transaction([storeName],mode)
+            const store = transaction.objectStore(storeName)
+            transaction.oncomplete = () => resolve()
+            transaction.onerror = () => reject(transaction.error)
+            const request = operation(store)
+            if(request){
+                request.onsucsess = () => resolve(request.result)
+                request.onerror = () => reject(request.error)
+            }
+        })
+    }
+    async clearAll() {
+        await this.executeTransaction('settings', 'readwrite', (store) => store.clear())
+        await this.executeTransaction('entries', 'readwrite', (store) => store.clear())
+        await this.executeTransaction('photos', 'readwrite', (store) => store.clear())
+    }
+}
 class DiaryApp{
     constructor(){
         this.isRealTitle = false
@@ -9,16 +89,23 @@ class DiaryApp{
         this.currentModalEntryId = null
         this.currentModalPhotoIndex = 0
         this.boundPhotoClickHandler = null
+        this.db = new diaryDB()
         this.init()
     }
     async init(){
-        await this.loadSettings()
-        await this.loadEntries()
-        this.bindEvents()
-        this.applySettings()
-        this.updateAllStyles()
-        this.renderEntries()
-        this.createPhotoModal()
+        try{
+            await this.db.init()
+            await this.loadSettings()
+            await this.loadEntries()
+            this.bindEvents()
+            this.applySettings()
+            this.updateAllStyles()
+            this.renderEntries()
+            this.createPhotoModal()
+        }
+        catch(error){
+            console.error(error)
+        }
     }
     bindEvents(){
         const titleToggle = document.getElementById('titleToggle')
@@ -106,7 +193,7 @@ class DiaryApp{
        this.updateTextStyles()
        this.updateButtonGradient()
     }
-    addEntry(){
+    async addEntry(){
         const textarea = document.getElementById('entryTextArea')
         const text = textarea.value.trim()
         if(text==='') return
@@ -114,12 +201,24 @@ class DiaryApp{
             id: Date.now(),
             date: this.getFormattedDate(),
             text: text,
-            photos: [...this.currentPhotos]
+            photos: []
+        }
+        if(this.currentPhotos.length > 0){
+            for(let i =0; i<this.currentPhotos.length; i++){
+                const photoData = {
+                    id: `${entry.id}_photo_${i}`,
+                    entryId: entry.id,
+                    dataUrl: this.currentPhotos[i],
+                    index: i
+                }
+                await this.db.savePhoto(photoData)
+            }
+            entry.photos = this.currentPhotos
         }
         this.entries.unshift(entry)
         textarea.value = ''
         this.clearCurrentPhotos()
-        this.saveEntries()
+        await this.db.saveEntry()
         this.renderEntries()
     }
     getPhotoLayoutClass(photoCount){
@@ -141,6 +240,12 @@ class DiaryApp{
     }
     renderEntries(){
         const entriesList = document.getElementById('entriesList')
+        for(const entry of this.entries){
+            if(!entry.photos || entry.photos.length===0){
+                const photos = await.this.db.getPhotosByEntry(entry.id)
+                entry.photos = photos.sort((a,b)=>a.index - b.index).map(photo=>photo.dataUrl)
+            }
+        }
         entriesList.innerHTML = this.entries.map(entry => `
             <div class="entry" data-id="${entry.id}">
                 <div class="entry-content">
@@ -163,37 +268,16 @@ class DiaryApp{
         div.textContent = text
         return div.innerHTML
     }
-    async saveEntries(){
-        return new Promise ((resolve)=>{
-            try {
-                localStorage.setItem('diaryEntries',JSON.stringify(this.entries))
-            } catch (error) {
-                console.error('Error saving entries:', error)
-                const entriesWithoutPhotos = this.entries.map(entry => ({
-                    ...entry,
-                    photos: []
-                }))
-                localStorage.setItem('diaryEntries',JSON.stringify(entriesWithoutPhotos))
-                alert('Photos were too large to save. Only text has been saved.')
-            }
-            resolve()
-        })
-    }
     async loadEntries(){
-        return new Promise((resolve)=>{
-            const savedEntries = localStorage.getItem('diaryEntries')
-            if(savedEntries){
                 try{
-                    this.entries = JSON.parse(savedEntries)
+                    const entries = await this.db.loadAllEntries()
+                    this.entries = entries.sort((a,b)=>b.id-a.id)
                 }
                 catch(error){
                     console.error(error)
                     this.entries = []
                 }
             }
-            resolve()
-        })
-    }
     addPhotoClickHandlers(){
     const entriesList = document.getElementById('entriesList')
     entriesList.removeEventListener('click', this.boundPhotoClickHandler)
@@ -245,17 +329,17 @@ class DiaryApp{
         const entry = this.entries.find(e=> e.id === numericEntryId)
        
     if (!entry) {
-        console.error('❌ Entry not found for ID:', numericEntryId)
+        console.error('Entry not found for ID:', numericEntryId)
         return
     }
     
     if (!entry.photos || entry.photos.length === 0) {
-        console.error('❌ No photos in entry')
+        console.error('No photos in entry')
         return
     }
     
     if (photoIndex < 0 || photoIndex >= entry.photos.length) {
-        console.error('❌ Invalid photo index:', photoIndex, 'Max:', entry.photos.length - 1)
+        console.error('Invalid photo index:', photoIndex, 'Max:', entry.photos.length - 1)
         return
     }
     
@@ -267,18 +351,20 @@ class DiaryApp{
     const photoCounter = document.getElementById('photoCounter')
     
     if (!modal || !modalImage) {
-        console.error('❌ Modal elements not found')
+        console.error('Modal elements not found')
         return
     }
     modalImage.src = entry.photos[photoIndex]
     photoCounter.textContent = `${photoIndex + 1}/${entry.photos.length}`
     modal.style.display = 'block'
     document.body.style.overflow = 'hidden'
+    document.body.style.width = '100%'
     }
     closePhotoModal(){
         const modal = document.getElementById('photoModal')
         modal.style.display = 'none'
         document.body.style.overflow = 'auto'
+        document.body.style.width = 'auto'
     }
     navigatePhotos(direction){
         const entry = this.entries.find(e=> e.id == this.currentModalEntryId)
@@ -379,7 +465,6 @@ class DiaryApp{
         this.updatePhotoButton()
     }
     async saveSettings(){
-        return new Promise((resolve)=>{
              const settings = {
                 isRealTitle : this.isRealTitle,
                 textColor: document.getElementById('textColorPicker').value,
@@ -388,16 +473,11 @@ class DiaryApp{
                 buttonGradientColor1: this.buttonGradientColor1,
                 buttonGradientColor2: this.buttonGradientColor2
             }
-        localStorage.setItem('diarySettings',JSON.stringify(settings))
-        resolve()
-        })
+        await this.db.saveSettings(settings)
     }
     async loadSettings(){
-        return new Promise((resolve)=>{
-            const savedSettings = localStorage.getItem('diarySettings')
-            if(savedSettings){
                 try{
-                    const settings = JSON.parse(savedSettings)
+                    const settings = await this.db.loadSettings()
                     this.isRealTitle = settings.isRealTitle || false
                     if(settings.textColor) document.getElementById('textColorPicker').value = settings.textColor
                     if(settings.bgColor) document.getElementById('bgColorPicker').value = settings.bgColor
@@ -416,15 +496,10 @@ class DiaryApp{
                         const titleToggle = document.getElementById('titleToggle')
                         if(titleToggle) titleToggle.textContent = `I don't wanna to see this`
                     }
-                    resolve()
                 }
                 catch(error){
                     console.error(error)
-                    resolve()
                 }
-            }
-            else resolve()
-        })
     }
     applySettings(){
         const textColor = document.getElementById('textColorPicker').value
