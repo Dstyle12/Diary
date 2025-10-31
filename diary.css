@@ -508,3 +508,549 @@ body{
     font-weight: bold;
     margin-left: 10px;
 }
+@media screen and (max-width: 1024px) {
+    .header {
+        padding: 15px;
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .header-left,
+    .header-right {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .header-left {
+        flex-direction: row;
+        gap: 15px;
+        justify-content: center;
+    }
+    
+    .title-toggle,
+    .bonus-button {
+        width: auto;
+        min-width: 200px;
+    }
+    
+    .main-title {
+        width: 100%;
+        font-size: 48px;
+        margin: 10px 0;
+        order: -1; 
+        text-align: center;
+    }
+    
+    .header-right {
+        flex-direction: column; 
+        align-items: center;
+        gap: 15px;
+        width: 100%;
+        max-width: 500px; 
+        margin: 0 auto;
+    }
+    
+    .color-control {
+        min-width: 200px; 
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding: 5px 0;
+        width: 100%;
+    }
+    
+    .color-control label {
+        font-size: 14px;
+        min-width: 120px; 
+        text-align: left;
+    }
+    
+    .color-input {
+        width: 60px; 
+        height: 40px;
+    }
+    
+    .header-right .color-control:last-child {
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .header-right .color-control:last-child label {
+        text-align: center;
+        min-width: auto;
+    }
+    
+    .image-upload-button,
+    .image-remove-button {
+        margin: 0 5px;
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    .entries-list {
+        width: 80%;
+    }
+    
+    .entry {
+        padding: 15px;
+    }
+    
+    .entry-text {
+        font-size: 18px;
+    }
+    
+    .input-wrapper {
+        gap: 10px;
+    }
+    
+    .textarea {
+        font-size: 16px;
+        padding: 12px;
+    }
+    
+    .modal-content {
+        padding: 10px;
+    }
+    
+    .close-modal {
+        right: 15px;
+        top: 15px;
+        font-size: 30px;
+    }
+    
+    .modal-nav {
+        bottom: 20px;
+        padding: 8px 16px;
+    }
+    
+    .nav-button {
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+}
+@media screen and (max-width: 768px) {
+      body {
+        padding-bottom: 260px; 
+    }
+    
+    .header {
+        padding: 10px;
+        gap: 15px;
+    }
+    
+    .main-title {
+        font-size: 36px;
+        margin: 5px 0;
+    }
+    
+    .header-left {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .title-toggle,
+    .bonus-button {
+        width: 100%;
+        max-width: 300px;
+        margin: 0 auto;
+    }
+    
+    .header-right {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        max-width: 100%;
+    }
+    
+    .color-control {
+        flex-direction: row;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 280px;
+        padding: 8px 0;
+    }
+    
+    .color-control label {
+        font-size: 12px;
+        min-width: 110px;
+        text-align: left;
+    }
+    
+    .entries-list {
+        width: 95%;
+        margin-bottom: 20px; 
+    }
+    
+    .entry {
+        padding: 12px;
+        margin: 0 10px 15px; 
+    }
+    
+    .entry-text {
+        font-size: 16px;
+        line-height: 1.4;
+    }
+    
+    .entry-date {
+        font-size: 12px;
+    }
+    
+    .input-container {
+        padding: 10px;
+        height: auto; 
+        min-height: 120px; 
+    }
+    
+    .input-wrapper {
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+    
+    .textarea {
+        min-height: 80px;
+        max-height: 120px; 
+        font-size: 16px;
+        border-radius: 8px;
+    }
+    
+    .voice-controls,
+    .photo-controls {
+        display: flex;
+        justify-content: center;
+        margin: 5px 0;
+    }
+    
+    .voice-record-button,
+    .add-photo-button,
+    .add-entry-button {
+        width: 45px;
+        height: 45px;
+        margin: 0 5px;
+    }
+    
+    .voice-record-button.recording {
+        width: 100px;
+    }
+    
+    .add-entry-button {
+        align-self: center;
+        margin-top: 10px;
+    }
+    
+    .diary-container {
+        padding-bottom: 20px; 
+    }
+    
+    .entry-photos.double,
+    .entry-photos.quadruple {
+        grid-template-columns: 1fr;
+    }
+    
+    .entry-photos.triple {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto;
+    }
+    
+    .entry-photos.triple .entry-photo:nth-child(1),
+    .entry-photos.triple .entry-photo:nth-child(2),
+    .entry-photos.triple .entry-photo:nth-child(3) {
+        height: 150px;
+        grid-row: auto;
+    }
+    
+    .entry-photos.quintuple {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .entry-photos.single .entry-photo {
+        height: 200px;
+        max-width: 100%;
+    }
+    
+    .entry-photos.double .entry-photo,
+    .entry-photos.quadruple .entry-photo {
+        height: 120px;
+    }
+    
+    .entry-photos.quintuple .entry-photo {
+        height: 80px;
+    }
+    
+    .modal-content {
+        padding: 5px;
+    }
+    
+    .close-modal {
+        right: 10px;
+        top: 10px;
+        font-size: 24px;
+        background: rgba(0, 0, 0, 0.5);
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-nav {
+        bottom: 10px;
+        padding: 6px 12px;
+        gap: 15px;
+    }
+    
+    .nav-button {
+        width: 30px;
+        height: 30px;
+        font-size: 18px;
+    }
+    
+    .photo-counter {
+        font-size: 14px;
+        min-width: 40px;
+    }
+    
+    #modalImage {
+        max-width: 95%;
+        max-height: 70%;
+    }
+}
+@media screen and (max-width: 480px) {
+       body {
+        padding-bottom: 230px; /* 🔵 УВЕЛИЧИВАЕМ еще больше для маленьких экранов */
+     } 
+    
+    .header {
+        padding: 8px;
+    }
+    
+    .main-title {
+        font-size: 28px;
+    }
+    
+    .title-toggle,
+    .bonus-button {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+    
+    .entries-list {
+        width: 100%;
+        padding: 0 5px;
+        margin-bottom: 25px; /* 🔵 БОЛЬШЕ отступ для маленьких экранов */
+    }
+    
+    .entry {
+        padding: 10px;
+        margin: 0 5px 12px; /* 🔵 УВЕЛИЧИВАЕМ margin-bottom */
+    }
+    
+    .entry-text {
+        font-size: 14px;
+    }
+    
+    .input-container {
+        padding: 8px;
+        min-height: 110px; /* 🔵 МЕНЬШАЯ минимальная высота */
+    }
+    
+    .textarea {
+        min-height: 70px;
+        max-height: 100px; /* 🔵 МЕНЬШАЯ максимальная высота */
+        font-size: 14px;
+        padding: 10px;
+    }
+    
+    .voice-record-button,
+    .add-photo-button,
+    .add-entry-button {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+    
+    .voice-record-button.recording {
+        width: 90px;
+    }
+    
+    .voice-time {
+        font-size: 10px;
+    }
+    
+    .voice-entry {
+        gap: 10px;
+        padding: 8px;
+    }
+    
+    .voice-play-button {
+        width: 32px;
+        height: 32px;
+        font-size: 16px;
+    }
+    
+    .voice-duration,
+    .voice-timer {
+        font-size: 12px;
+    }
+    
+    .color-control {
+        max-width: 220px;
+        
+    }
+    
+    .color-control label {
+        font-size: 10px;
+        min-width: 80px;
+    }
+    
+    .color-input {
+        width: 40px;
+        height: 30px;
+    }
+    
+    .image-upload-button,
+    .image-remove-button {
+        font-size: 10px;
+        padding: 6px 10px;
+    }
+    
+    .entry-photos.quintuple {
+        grid-template-columns: 1fr;
+    }
+    
+    .entry-photos.quintuple .entry-photo {
+        height: 70px;
+    }
+    
+    .close-modal {
+        right: 5px;
+        top: 5px;
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+    
+    .modal-nav {
+        bottom: 5px;
+        padding: 5px 10px;
+    }
+    
+    .nav-button {
+        width: 25px;
+        height: 25px;
+        font-size: 16px;
+    }
+    
+    .photo-counter {
+        font-size: 12px;
+        min-width: 35px;
+    }
+}
+@media screen and (max-width: 360px) {
+    body {
+        padding-bottom: 210px; 
+    }
+    
+    .main-title {
+        font-size: 24px;
+    }
+    
+    .header-left {
+        gap: 8px;
+    }
+    
+    .title-toggle,
+    .bonus-button {
+        min-width: auto;
+        width: 100%;
+        font-size: 11px;
+        padding: 6px 10px;
+    }
+    
+    .entry {
+        padding: 8px;
+        margin: 0 5px 10px; 
+    }
+    
+    .entry-text {
+        font-size: 13px;
+    }
+    
+    .input-container {
+        padding: 6px;
+        min-height: 100px; 
+    }
+    
+    .input-wrapper {
+        gap: 8px;
+    }
+    
+    .textarea {
+        min-height: 60px;
+        max-height: 80px; 
+    }
+    
+    .voice-record-button,
+    .add-photo-button {
+        margin: 0 3px;
+    }
+    
+    .voice-record-button.recording {
+        width: 80px;
+    }
+}
+@media screen and (max-height: 500px) and (orientation: landscape) {
+    body {
+        padding-bottom: 120px;
+    }
+    
+    .header {
+        padding: 5px 10px;
+        flex-direction: row;
+        flex-wrap: nowrap;
+    }
+    
+    .header-left {
+        width: auto;
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .main-title {
+        font-size: 24px;
+        width: auto;
+        margin: 0;
+    }
+    
+    .header-right {
+        width: auto;
+        flex-direction: row;
+        gap: 10px;
+    }
+    
+    .color-control {
+        flex-direction: column;
+        min-width: auto;
+    }
+    
+    .color-control label {
+        font-size: 9px;
+        min-width: auto;
+    }
+    
+    .input-container {
+        padding: 5px 10px;
+    }
+    
+    .textarea {
+        min-height: 50px;
+        max-height: 80px;
+    }
+    
+    .entries-list {
+        width: 90%;
+    }
+}
